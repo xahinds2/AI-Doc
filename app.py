@@ -37,7 +37,7 @@ def home():
     return render_template('home.html', isLogin=current_user.is_authenticated)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
 
@@ -56,7 +56,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup/', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         username = request.form['username']
@@ -84,14 +84,14 @@ def signup():
     return render_template('signup.html')
 
 
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route('/logout/')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
 
-@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/dashboard/', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     return render_template('home.html')
