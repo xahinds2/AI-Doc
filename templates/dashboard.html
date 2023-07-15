@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Ai-Doc</title>
+  <style>
+    .sidebar {
+      width: 240px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .sidebar.closed {
+      transform: translateX(-240px);
+    }
+
+    @media (max-width: 640px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 999;
+        background-color: #F7FAFC;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        transform: translateX(-240px);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .content {
+        transition: margin-left 0.3s ease-in-out;
+      }
+
+      .content.open {
+        margin-left: 240px;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100">
+  <nav class="bg-blue-500 px-4 py-3">
+    <div class="container mx-auto">
+      <div class="flex items-center justify-between">
+        <a href="#" class="text-white font-bold text-lg">Health Website</a>
+        <button id="toggleSidebar" class="text-white focus:outline-none lg:hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+            <path d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mx-auto mt-4">
+    <div class="flex">
+      <div class="sidebar bg-gray-200 px-4 py-6">
+        <ul>
+          <li class="mb-4">
+            <a href="#" class="text-blue-500 hover:text-blue-700">Chat 1</a>
+          </li>
+          <li class="mb-4">
+            <a href="#" class="text-blue-500 hover:text-blue-700">Chat 2</a>
+          </li>
+          <li class="mb-4">
+            <a href="#" class="text-blue-500 hover:text-blue-700">Chat 3</a>
+          </li>
+          <li class="mb-4">
+            <a href="#" class="text-blue-500 hover:text-blue-700">Chat 4</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="flex-1 px-4 py-6">
+        <div class="max-w-md mx-auto">
+          <div class="mb-4">
+            <label for="input" class="block text-gray-700 text-sm font-bold mb-2">Input:</label>
+            <input id="input" type="text"
+              class="w-full bg-white focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-4 block"
+              placeholder="Enter your input here">
+          </div>
+          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.querySelector('.sidebar');
+    const content = document.querySelector('.flex-1');
+    const toggleSidebar = document.getElementById('toggleSidebar');
+
+    toggleSidebar.addEventListener('click', () => {
+      sidebar.classList.toggle('closed');
+      content.classList.toggle('open');
+    });
+  </script>
+</body>
+
+</html>
