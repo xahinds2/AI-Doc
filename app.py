@@ -94,7 +94,7 @@ def logout():
 @app.route('/dashboard/', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    return render_template('home.html')
+    return render_template('dashboard.html')
 
 
 @app.route('/delete_user/<username>')
