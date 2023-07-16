@@ -20,6 +20,8 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
+# user login and signup functionality
+
 class User(UserMixin):
     def __init__(self, user_data):
         self.id = str(user_data['_id'])
@@ -106,8 +108,11 @@ def users():
     return render_template('users.html', user_list=user_list)
 
 
+# dashboard section starts here
+
 @app.route('/dashboard/')
 def dashboard():
+    # from javascript the /chat function is called
     return render_template('dashboard.html')
 
 
