@@ -41,6 +41,13 @@
         margin-left: 240px;
       }
     }
+
+    .response {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: #F7FAFC;
+      border-radius: 0.5rem;
+    }
   </style>
 </head>
 
@@ -48,7 +55,7 @@
   <nav class="bg-blue-500 px-4 py-3">
     <div class="container mx-auto">
       <div class="flex items-center justify-between">
-        <a href="#" class="text-white font-bold text-lg">Health Website</a>
+        <a href="#" class="text-white font-bold text-lg">Ai-Doc</a>
         <button id="toggleSidebar" class="text-white focus:outline-none lg:hidden">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
@@ -80,16 +87,19 @@
 
       <div class="flex-1 px-4 py-6">
         <div class="max-w-md mx-auto">
-          <div class="mb-4">
-            <label for="input" class="block text-gray-700 text-sm font-bold mb-2">Input:</label>
-            <input id="input" type="text"
-              class="w-full bg-white focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-4 block"
-              placeholder="Enter your input here">
-          </div>
-          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Submit
-          </button>
+          <form id="chatForm">
+            <div class="mb-4">
+              <label for="input" class="block text-gray-700 text-sm font-bold mb-2">Input:</label>
+              <input id="input" type="text"
+                class="w-full bg-white focus:outline-none focus:shadow-outline border border-gray-300 rounded-lg py-2 px-4 block"
+                placeholder="Enter your input here">
+            </div>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              Submit
+            </button>
+          </form>
         </div>
+        <div id="responseContainer" class="mt-8"></div>
       </div>
     </div>
   </div>
@@ -98,10 +108,42 @@
     const sidebar = document.querySelector('.sidebar');
     const content = document.querySelector('.flex-1');
     const toggleSidebar = document.getElementById('toggleSidebar');
+    const chatForm = document.getElementById('chatForm');
+    const userInput = document.getElementById('input');
+    const responseContainer = document.getElementById('responseContainer');
 
     toggleSidebar.addEventListener('click', () => {
       sidebar.classList.toggle('closed');
       content.classList.toggle('open');
+    });
+
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = userInput.value;
+
+      fetch('/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          const responseElement = document.createElement('div');
+          responseElement.className = 'response';
+          const userMessage = document.createElement('p');
+          userMessage.textContent = `You: ${message}`;
+          const aiMessage = document.createElement('p');
+          aiMessage.textContent = `AI: ${data.response}`;
+
+          responseElement.appendChild(userMessage);
+          responseElement.appendChild(aiMessage);
+          responseContainer.appendChild(responseElement);
+
+          userInput.value = '';
+        })
+        .catch(error => console.error('Error:', error));
     });
   </script>
 </body>
