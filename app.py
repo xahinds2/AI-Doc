@@ -136,12 +136,13 @@ def profile():
     return render_template('profile.html')
 
 
-@app.route('/submit_form', methods=['POST'])
+@app.route('/submit_form/', methods=['POST'])
 def submit_form():
     form_data = request.form.to_dict()
 
     # Save data to MongoDB
     result = collection.insert_one(form_data)
+
     if result.acknowledged:
         return jsonify({"message": "Form data saved successfully"})
     else:
@@ -150,3 +151,35 @@ def submit_form():
 
 if __name__ == "__main__":
     app.run()
+
+
+search_String = """
+**Medical Query: Causes of Symptoms**
+
+Symptom: [chest pain, headache, burping]
+past medical conditions = []
+family medical history = []
+past surgeries = []
+allergies = []
+medications or supplements you are taking = []
+Chronic diseases = []
+Physical Examination Findings = []
+Vital Signs = []
+Sample Photos = []
+Any Relevant Tests = []
+
+Please provide information on the possible causes of the above symptom.
+Include both common and rare conditions that may lead to experiencing this symptom.
+
+1. **Common Causes**: List the most prevalent medical conditions or factors that can lead to the occurrence of this symptom.
+
+2. **Less Common Causes**: Include less frequent but noteworthy conditions associated with this symptom.
+
+3. **Severity**: Indicate whether this symptom could be a sign of a serious medical issue or if it is typically harmless.
+
+4. **Additional Symptoms**: Mention any other symptoms that might accompany the primary symptom, as they could provide valuable context.
+
+5. **Risk Factors**: Discuss any known risk factors that increase the likelihood of experiencing this symptom.
+
+6. **When to Seek Medical Advice**: Provide guidance on when an individual should consult a healthcare professional regarding this symptom.
+"""
