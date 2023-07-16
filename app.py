@@ -131,5 +131,22 @@ def chat():
     return jsonify({'response': response})
 
 
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+
+@app.route('/submit_form', methods=['POST'])
+def submit_form():
+    form_data = request.form.to_dict()
+
+    # Save data to MongoDB
+    result = collection.insert_one(form_data)
+    if result.acknowledged:
+        return jsonify({"message": "Form data saved successfully"})
+    else:
+        return jsonify({"error": "Failed to save form data"}), 500
+
+
 if __name__ == "__main__":
     app.run()
