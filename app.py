@@ -6,6 +6,7 @@ from pymongo import MongoClient
 import openai
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'thisisasecretkey'
 
 openai.api_key = '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'
 
@@ -29,14 +30,13 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     user_data = collection.find_one({'_id': ObjectId(user_id)})
-    if user_data:
-        return User(user_data)
-    return None
+    return User(user_data)
 
 
 @app.route('/')
 def home():
-    return render_template('home.html', isLogin=current_user.is_authenticated)
+    is_login = current_user.is_authenticated
+    return render_template('home.html', isLogin=is_login)
 
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -52,8 +52,8 @@ def login():
                 login_user(User(user_data))
                 return redirect(url_for('dashboard'))
 
-        return render_template('login.html',
-                               error='Username or Password is wrong!')
+        msg = 'Username or Password is wrong!'
+        return render_template('login.html', error=msg)
 
     return render_template('login.html')
 
@@ -69,8 +69,8 @@ def signup():
         user_data = collection.find_one({'username': username})
 
         if user_data:
-            return render_template('signup.html',
-                                   error='Username already exist!')
+            msg = 'Username already exist!'
+            return render_template('signup.html', error=msg)
 
         hashed_password = bcrypt.generate_password_hash(password)
         user_data = {
@@ -113,9 +113,7 @@ def dashboard():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-
     user_input = request.json['message']
-
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{
@@ -124,9 +122,7 @@ def chat():
         }],
         temperature=0
     )
-
     response = response.choices[0].message["content"]
-
     return jsonify({'response': response})
 
 
