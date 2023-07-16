@@ -1,13 +1,11 @@
 from bson import ObjectId
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from flask import Flask, render_template, url_for, redirect, request
+from flask import Flask, render_template, url_for, redirect, request, jsonify
 from pymongo import MongoClient
-from flask import Flask, render_template, request, jsonify
 import openai
 
 app = Flask(__name__)
-
 
 openai.api_key = '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'
 
@@ -95,9 +93,6 @@ def logout():
     return redirect(url_for('login'))
 
 
-
-
-
 @app.route('/delete_user/<username>')
 def delete_user(username):
     collection.delete_one({'username': username})
@@ -111,34 +106,28 @@ def users():
     return render_template('users.html', user_list=user_list)
 
 
-
-@app.route('/dashboard')
-def index():
+@app.route('/dashboard/')
+def dashboard():
     return render_template('dashboard.html')
+
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_input = request.json['message']
-    response = chat_with_ai(user_input)
-    return jsonify({'response': response})
 
-def chat_with_ai(message):
-    response = openai.Completion.create(
-        engine='text-davinci-003',
-        prompt=message,
-        max_tokens=50,
-        temperature=0.7,
-        n=1,
-        stop=None
+    user_input = request.json['message']
+
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{
+            "role": "user",
+            "content": user_input
+        }],
+        temperature=0
     )
 
-    if response.choices:
-        return response.choices[0].text.strip()
-    else:
-        return "Sorry, I didn't understand that."
+    response = response.choices[0].message["content"]
 
-
-
+    return jsonify({'response': response})
 
 
 if __name__ == "__main__":
