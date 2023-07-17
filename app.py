@@ -1,10 +1,10 @@
 import openai
 from bson import ObjectId
 from flask_bcrypt import Bcrypt
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
-from flask import Flask, render_template, url_for, redirect, request, jsonify
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user
+from flask import Flask, render_template, url_for, redirect, request
 from pymongo import MongoClient
-from views import home, profile, dashboard, chat
+from views import home, profile, dashboard, chatgpt_query
 
 
 app = Flask(__name__)
@@ -103,7 +103,7 @@ def users():
 
 
 app.route('/')(home)
-app.add_url_rule('/chat/', view_func=chat, methods=['GET', 'POST'])
+app.add_url_rule('/chat/', view_func=chatgpt_query, methods=['GET', 'POST'])
 app.add_url_rule('/profile/', view_func=profile, methods=['GET', 'POST'])
 app.add_url_rule('/dashboard/', view_func=dashboard, methods=['GET', 'POST'])
 

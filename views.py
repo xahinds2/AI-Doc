@@ -24,12 +24,19 @@ def profile():
 
 
 def dashboard():
-    # from javascript the /chat function is called
+    if request.method == 'POST':
+        age = 50
+        gender = 'male'
+        symptoms = request.form['symptoms']
+        query = f"I am {age} {gender}, i am having {symptoms}, I know that you are not doctor but " \
+                f"please provide information on the possible causes of the above symptom."
+        resp = chatgpt_query(query)
+        return render_template('dashboard.html', resp=resp)
+
     return render_template('dashboard.html')
 
 
-def chat():
-    user_input = request.json['message']
+def chatgpt_query(user_input):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[{
@@ -38,5 +45,5 @@ def chat():
         }],
         temperature=0
     )
-    response = response.choices[0].message["content"]
-    return jsonify({'response': response})
+    return response.choices[0].message["content"]
+
