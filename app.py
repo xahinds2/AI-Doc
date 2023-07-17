@@ -1,9 +1,11 @@
+import openai
 from bson import ObjectId
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask import Flask, render_template, url_for, redirect, request, jsonify
 from pymongo import MongoClient
-import openai
+from views import home, profile, dashboard, chat
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'thisisasecretkey'
@@ -20,8 +22,6 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
-# user login and signup functionality
-
 class User(UserMixin):
     def __init__(self, user_data):
         self.id = str(user_data['_id'])
@@ -33,12 +33,6 @@ class User(UserMixin):
 def load_user(user_id):
     user_data = collection.find_one({'_id': ObjectId(user_id)})
     return User(user_data)
-
-
-@app.route('/')
-def home():
-    is_login = current_user.is_authenticated
-    return render_template('home.html', isLogin=is_login)
 
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -108,38 +102,10 @@ def users():
     return render_template('users.html', user_list=user_list)
 
 
-# dashboard section starts here
-
-@app.route('/dashboard/')
-def dashboard():
-    # from javascript the /chat function is called
-    return render_template('dashboard.html')
-
-
-@app.route('/chat', methods=['POST'])
-def chat():
-    user_input = request.json['message']
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{
-            "role": "user",
-            "content": user_input
-        }],
-        temperature=0
-    )
-    response = response.choices[0].message["content"]
-    return jsonify({'response': response})
-
-
-@app.route('/profile', methods=['GET', 'POST'])
-def profile():
-    if request.method == 'POST':
-        form_data = request.form.to_dict()
-        collection.insert_one(form_data)
-        msg = "Form data saved successfully"
-        return render_template('profile.html', msg=msg)
-
-    return render_template('profile.html')
+app.route('/')(home)
+app.add_url_rule('/chat/', view_func=chat, methods=['GET', 'POST'])
+app.add_url_rule('/profile/', view_func=profile, methods=['GET', 'POST'])
+app.add_url_rule('/dashboard/', view_func=dashboard, methods=['GET', 'POST'])
 
 
 if __name__ == "__main__":
