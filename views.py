@@ -23,6 +23,18 @@ def profile():
     return render_template('profile.html')
 
 
+def chatgpt_query(user_input):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{
+            "role": "user",
+            "content": user_input
+        }],
+        temperature=0
+    )
+    return response.choices[0].message["content"]
+
+
 def dashboard():
     if request.method == 'POST':
         age = 50
@@ -36,14 +48,27 @@ def dashboard():
     return render_template('dashboard.html')
 
 
-def chatgpt_query(user_input):
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{
-            "role": "user",
-            "content": user_input
-        }],
-        temperature=0
-    )
-    return response.choices[0].message["content"]
+def diet():
+    if request.method == 'POST':
+        age = 50
+        gender = 'male'
+        symptoms = request.form['symptoms']
+        query = f"I am {age} {gender}, i am having {symptoms}, " \
+                f"please provide information on the foods to eat and avoid for the above symptom."
+        resp = chatgpt_query(query)
+        return render_template('diet.html', resp=resp)
 
+    return render_template('diet.html')
+
+
+def lifestyle():
+    if request.method == 'POST':
+        age = 50
+        gender = 'male'
+        symptoms = request.form['symptoms']
+        query = f"I am {age} {gender}, i am having {symptoms}, " \
+                f"please provide information on the lifestyle changes that may cure the above symptom."
+        resp = chatgpt_query(query)
+        return render_template('lifestyle.html', resp=resp)
+
+    return render_template('lifestyle.html')
